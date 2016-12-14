@@ -1,0 +1,25 @@
+PATH
+  remote: .
+  specs:
+    vfr-utils (0.0.1)
+      faraday (~> 0.9)
+      nokogiri (~> 1.5)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    faraday (0.10.0)
+      multipart-post (>= 1.2, < 3)
+    mini_portile2 (2.1.0)
+    multipart-post (2.0.0)
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  vfr-utils!
+
+BUNDLED WITH
+   1.13.6
