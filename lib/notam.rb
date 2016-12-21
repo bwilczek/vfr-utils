@@ -1,24 +1,14 @@
+require_relative './vfr-utils'
 require 'faraday'
 require 'nokogiri'
 require 'date'
 
-require_relative './notam/configuration'
-
 module VfrUtils
   module NOTAM
 
-    class << self
-      attr_accessor :configuration
-    end
-
-    self.configuration ||= Configuration.new
+    URL='https://www.notams.faa.gov/dinsQueryWeb/queryRetrievalMapAction.do'
 
     class << self
-
-      def configure
-        self.configuration ||= Configuration.new
-        yield configuration
-      end
 
       def get(icao_codes)
         icao_codes = [*icao_codes]
@@ -32,47 +22,28 @@ module VfrUtils
       end
 
       def get_one(icao_code)
-        raw_notams = fetch(icao_code)
         ret = []
-        raw_notams.each do |raw_notam|
-          ret << parse(raw_notam)
+        return VfrUtils.cache.get("notam_#{icao_code}") do
+          html = fetch_from_web(icao_code)
+          html_doc = Nokogiri::HTML(html)
+          html_doc.xpath("//td[@class='textBlack12']/pre").map(&:text).each do |raw_notam|
+            ret << parse(raw_notam)
+          end
+          ret
         end
-        ret
       end
 
       private
 
-      def prepare_cache_file(icao_code)
-        FileUtils.mkdir_p configuration.cache_directory
-        cache_file_path = "#{configuration.cache_directory}/notam_#{icao_code}.tmp"
-
-        # expire cache
-        if File.exists?(cache_file_path)
-          FileUtils.rm_rf(cache_file_path) if Time.now.to_i - File.ctime(cache_file_path).to_i > configuration.cache_lifetime
-        end
-        cache_file_path
-      end
-
-      # Return Array of raw NOTAM messages
-      def fetch(icao_code)
-        cache_file_path = prepare_cache_file(icao_code)
-        unless File.exists?(cache_file_path)
-          fetch_from_web_and_cache(icao_code, cache_file_path)
-        end
-
-        html_doc = Nokogiri::HTML(File.read(cache_file_path))
-        html_doc.xpath("//td[@class='textBlack12']/pre").map(&:text)
-      end
-
-      def fetch_from_web_and_cache(icao_code, cache_file_path)
+      def fetch_from_web(icao_code)
         request_params = {
           reportType: 'Raw',
           retrieveLocId: icao_code,
           actionType: 'notamRetrievalByICAOs',
           submit: 'View NOTAMs'
         }
-        response = Faraday.post Configuration::URL, request_params
-        File.write(cache_file_path, response.body)
+        response = Faraday.post URL, request_params
+        response.body
       end
 
       def parse(raw_notam)
@@ -113,18 +84,16 @@ module VfrUtils
         ret
       end
 
+      def parse_validity_time(text)
+        return DateTime.new(2100) if text == 'PERM'
+        year = text[0..1].to_i+2000
+        month = text[2..3].to_i
+        day = text[4..5].to_i
+        hour = text[6..7].to_i
+        minute = text[8..9].to_i
+        zone = text[10..15]
+        DateTime.parse("#{year}-#{month}-#{day} #{hour}:#{minute}:00#{zone}")
+      end
     end
-
-    def self.parse_validity_time(text)
-      return DateTime.new(2100) if text == 'PERM'
-      year = text[0..1].to_i+2000
-      month = text[2..3].to_i
-      day = text[4..5].to_i
-      hour = text[6..7].to_i
-      minute = text[8..9].to_i
-      zone = text[10..15]
-      DateTime.parse("#{year}-#{month}-#{day} #{hour}:#{minute}:00#{zone}")
-    end
-
   end
 end
