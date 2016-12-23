@@ -1,8 +1,8 @@
 require 'pp'
 
 module VfrUtils
-  module NOTAM
-    module Formatter
+  module Formatter
+    module NOTAM
       def self.pretty_display(notams)
         notams.each_pair do |icao_code, notams_for_aerodrome|
           puts "=================================================="
