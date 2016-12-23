@@ -1,11 +1,11 @@
-require_relative 'version'
+require_relative '../vfr_utils'
 
 module VfrUtils
   module CLI
 
     ALLOWED_ACTIONS = [
       'metar',
-      # 'taf',
+      'taf',
       'notam'
     ]
 
@@ -35,8 +35,14 @@ module VfrUtils
 
     def self.metar(icao_codes)
       require_relative 'metar'
-      require_relative 'formatter/metar'
-      VfrUtils::Formatter::METAR.pretty_display(VfrUtils::METAR.get(icao_codes))
+      require_relative 'formatter/weather'
+      VfrUtils::Formatter::Weather.pretty_display(VfrUtils::METAR.get(icao_codes))
+    end
+
+    def self.taf(icao_codes)
+      require_relative 'taf'
+      require_relative 'formatter/weather'
+      VfrUtils::Formatter::Weather.pretty_display(VfrUtils::TAF.get(icao_codes))
     end
 
   end

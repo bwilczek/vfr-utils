@@ -1,4 +1,4 @@
-require './lib/version'
+require './lib/vfr_utils/version'
 
 Gem::Specification.new do |s|
   s.name        = 'vfr-utils'
