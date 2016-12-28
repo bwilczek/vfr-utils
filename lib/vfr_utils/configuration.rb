@@ -4,7 +4,7 @@ module VfrUtils
   class Configuration
     DEFAULTS = {
       cache_lifetime: 900, # 900 secs = 15 minutes
-      cache_directory: "#{Dir.tmpdir}/vfr-utils",
+      cache_directory: "#{Dir.tmpdir}/vfr_utils",
       cache_backend: :files,
       redis_url: nil,
     }

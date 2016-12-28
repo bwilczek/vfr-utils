@@ -3,12 +3,12 @@ This gem provides interface (both programmatic and CLI) to obtain aeronautical d
 
 ### Installation
 ```
-gem install vfr-utils
+gem install vfr_utils
 ```
 
 ### Usage examples
 ```
-require 'vfr-utils'
+require 'vfr_utils'
 
 # Configuration (optional)
 VfrUtils.configure do |config|
@@ -19,7 +19,7 @@ VfrUtils.configure do |config|
     # seconds to cache data, default is 15 minutes
     config.cache_lifetime = 900
 
-    # location of tmp files, default #{Dir.tmpdir}/vfr-utils
+    # location of tmp files, default #{Dir.tmpdir}/vfr_utils
     config.cache_directory = '/usr/data/cache'
   }
 
@@ -41,9 +41,9 @@ pp VfrUtils::METAR.get_one 'EPPO'
 
 ### Command Line Interface
 ```
-vfr-utils notam EPWR LKLB
-vfr-utils taf EPWR
-vfr-utils metar EPWR LKLB KJFK
+vfr_utils notam EPWR LKLB
+vfr_utils taf EPWR
+vfr_utils metar EPWR LKLB KJFK
 ```
 
 ### TODO

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Bartek Wilczek']
   s.email       = ['bwilczek@gmail.com']
   s.files       = Dir['lib/*.rb'] + Dir['lib/**/*.rb'] + Dir['bin/*']
-  s.homepage    = 'https://github.com/bwilczek/vfr-utils'
+  s.homepage    = 'https://github.com/bwilczek/vfr_utils'
   s.license     = 'MIT'
   s.executables << 'vfr_utils'
   s.required_ruby_version = '~> 2.0'
