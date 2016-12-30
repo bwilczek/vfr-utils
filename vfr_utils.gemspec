@@ -14,4 +14,5 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '~> 2.0'
   s.add_runtime_dependency 'nokogiri', '~> 1.5'
   s.add_runtime_dependency 'faraday', '~> 0.9'
+  s.add_runtime_dependency 'redis', '~> 3.2'
 end

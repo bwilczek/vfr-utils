@@ -3,10 +3,12 @@ module VfrUtils
 
     def initialize(config)
       @config = config
+      init_redis
     end
 
     def get(k, &blk)
        return get_files(k, &blk) if config.cache_backend == :files
+       return get_redis(k, &blk) if config.cache_backend == :redis
        raise "Unsupported cache backend: #{config.cache_backend}"
     end
 
@@ -14,6 +16,12 @@ module VfrUtils
 
     def config
       @config
+    end
+
+    def init_redis
+      return unless config.cache_backend == :redis
+      return unless @redis.nil?
+      @redis = Redis.new(url: config.redis_url)
     end
 
     def get_files(k)
@@ -27,6 +35,15 @@ module VfrUtils
       end
       v = yield
       File.write(cache_file_path, Marshal.dump(v))
+      v
+    end
+
+    def get_redis(k)
+      init_redis
+      v = @redis.get(k)
+      return Marshal.load(v) unless v.nil?
+      v = yield
+      @redis.setex(k, config.cache_lifetime, Marshal.dump(v))
       v
     end
   end

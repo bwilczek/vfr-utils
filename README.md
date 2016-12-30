@@ -25,7 +25,8 @@ VfrUtils.configure do |config|
 
   # those can be overwritten for each service:
   config.notam.cache_lifetime = 3600 # cache NOTAMS for 12h
-  config.taf.cache_directory = '/usr/data/cache/weather'
+  config.taf.cache_backend = :redis
+  config.taf.redis_url = 'redis://localhost:6379'
   config.metar.cache_directory = '/usr/data/cache/weather'
 end
 
@@ -45,8 +46,3 @@ vfr_utils notam EPWR LKLB
 vfr_utils taf EPWR
 vfr_utils metar EPWR LKLB KJFK
 ```
-
-### TODO
-
-- Use `redis` as caching backend (optionally).
-- Consider improvements for decoding and formatting
