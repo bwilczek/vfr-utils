@@ -30,11 +30,11 @@ module VfrUtils
         if Time.now.to_i - File.ctime(cache_file_path).to_i > config.cache_lifetime
           FileUtils.rm_rf(cache_file_path)
         else
-          return Marshal.load(File.read(cache_file_path))
+          return Marshal.load(File.binread(cache_file_path))
         end
       end
       v = yield
-      File.write(cache_file_path, Marshal.dump(v))
+      File.binwrite(cache_file_path, Marshal.dump(v))
       v
     end
 
